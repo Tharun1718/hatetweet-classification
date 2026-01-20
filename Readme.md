@@ -21,9 +21,3 @@ This project classifies tweets as "Hate" or "Normal" using a Bidirectional LSTM 
 
 1. Install dependencies: `pip install -r requirements.txt`
 2. Run the notebook `notebook.ipynb`.
-
-## Notes:
-
-"I chose a Bidirectional LSTM because it strikes the optimal balance between capturing context (which basic ML misses) and iteration speed (which LLMs slow down). Given the 24-hour deadline, I wanted a model complex enough to understand word order and negation, but lightweight enough to train and debug rapidly."
-
-Improvement: Initialize the Embedding layer with pre-trained GloVe vectors to better handle Out-Of-Vocabulary (OOV) terms and capture semantic similarities between words.
