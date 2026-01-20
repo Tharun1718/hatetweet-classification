@@ -1,0 +1,47 @@
+# In your notebook cell:
+
+import pandas as pd
+from torch.utils.data import DataLoader
+from src.dataset import HateSpeechDataset, CollateFn
+
+# 1. Load Data
+train_df = pd.read_csv("data/train.csv")
+test_df = pd.read_csv("data/test.csv")
+
+# 2. Setup Training Dataset & Vocab
+# We build the vocabulary ONLY on the training data
+train_dataset = HateSpeechDataset(train_df, is_test=False)
+vocab = train_dataset.vocab  # Save this vocab to use for test!
+
+# 3. Setup Test Dataset
+# CRITICAL: Pass the 'vocab' from train to test. 
+# Do not build a new vocab for test data!
+test_dataset = HateSpeechDataset(test_df, vocab=vocab, is_test=True)
+
+# 4. DataLoaders
+pad_idx = vocab.stoi["<PAD>"]
+
+train_loader = DataLoader(
+    train_dataset, 
+    batch_size=32, 
+    shuffle=True, 
+    collate_fn=CollateFn(pad_idx=pad_idx, is_test=False)
+)
+
+test_loader = DataLoader(
+    test_dataset, 
+    batch_size=32, 
+    shuffle=False, # Don't shuffle test data
+    collate_fn=CollateFn(pad_idx=pad_idx, is_test=True)
+)
+
+# 5. Quick Check
+print("Checking Train Batch:")
+for text, label in train_loader:
+    print(text.shape, label.shape)
+    break
+
+print("\nChecking Test Batch:")
+for text in test_loader:
+    print(text.shape) # Should only see one tensor (the text)
+    break
